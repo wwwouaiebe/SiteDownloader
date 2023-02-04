@@ -54,19 +54,56 @@ class SourceDownloader {
 	#fileCounter;
 
 	/**
+	A list of keywords to exclude some url
+	@type {Array.<String>}
+	*/
+
+	#excludeList = [ 'TravelNotes', 'EncryptDecrypt', 'base64' ];
+
+	/**
     Add an url to the link map if needed
     @param {String} url The url to add
     */
 
 	#processLink ( url ) {
 
-		// we verify that the url point to the downloaded site
-		if ( 0 === url.indexOf ( theConfig.srcUrl ) ) {
+		// decoding the url ( = replace %... with the correct characters )
+		let decodedUrl = decodeURI ( url );
+		let exclude = false;
 
-			// we add the url to the link map if not already done
-			if ( ! this.#linkMap.get ( url ) ) {
-				this.#linkMap.set ( url, new Link ( url ) );
-			}
+		// excluding some url
+		this.#excludeList.forEach (
+			keyword => { exclude = decodedUrl.includes ( keyword ) || exclude; }
+		);
+		if ( exclude ) {
+			return;
+		}
+
+		// replacing relative url with absolute url
+
+		if ( 0 === decodedUrl.indexOf ( '/' ) ) {
+			decodedUrl = theConfig.srcUrl + decodedUrl.slice ( 1 );
+		}
+
+		// removing anchor from the url
+		let sqrIndex = decodedUrl.indexOf ( '#' );
+		if ( -1 !== sqrIndex ) {
+			decodedUrl = decodedUrl.slice ( 0, sqrIndex );
+		}
+
+		// it's a link to an image...
+		if ( -1 !== decodedUrl.indexOf ( '.jpg' ) ) {
+			return;
+		}
+
+		// we verify that the url point to the downloaded site
+		if ( 0 !== decodedUrl.indexOf ( theConfig.srcUrl ) ) {
+			return;
+		}
+
+		// we add the url to the link map if not already done
+		if ( ! this.#linkMap.get ( decodedUrl ) ) {
+			this.#linkMap.set ( decodedUrl, new Link ( decodedUrl ) );
 		}
 	}
 
