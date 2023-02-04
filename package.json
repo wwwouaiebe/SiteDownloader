@@ -12,6 +12,7 @@
     "eslint": "latest",
     "grunt": "latest",
     "grunt-eslint": "latest",
+    "grunt-essimpledoc": "latest",
     "grunt-wwwouaiebe-buildnumber": "latest"
   },
   "dependencies": {
@@ -25,7 +26,8 @@
     "node": ">=18.14.0"
   },
   "scripts": {
-    "debug": "node node_modules/grunt/bin/grunt"
+    "debug": "node node_modules/grunt/bin/grunt",
+    "anthisnes": "node ./src/index.js --srcUrl=http://razara.anthisnes.org/ --destUrl=https://www.anthisnes.org/ --destDir=./dest"
   },
   "author": "wwwouaiebe",
   "license": "GPL-3.0",

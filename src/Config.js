@@ -22,14 +22,63 @@ Changes:
 */
 /* ------------------------------------------------------------------------------------------------------------------------- */
 
-import AppLoader from './AppLoader.js';
-
 /* ------------------------------------------------------------------------------------------------------------------------- */
 /**
-The entry point of the app
+A simple container to store the app configuration
 */
 /* ------------------------------------------------------------------------------------------------------------------------- */
 
-new AppLoader ( ).loadApp ( );
+class Config {
+
+	/**
+	The url where the source files are.
+	@type {String}
+	*/
+
+	srcUrl;
+
+	/**
+	The url where the files have to go
+	@type {String}
+	*/
+
+	destUrl;
+
+	/**
+	The path to the directory where the files have to be generated
+	@type {String}
+	*/
+
+	destDir;
+
+	/**
+	The directory where the app is installed. Coming from the app parameter
+	@type {String}
+	*/
+
+	appDir;
+
+	/**
+	The constructor
+	*/
+
+	constructor ( ) {
+		this.srcUrl = '';
+		this.destUrl = '';
+		this.destDir = '';
+		this.appDir = '';
+	}
+
+}
+
+/* ------------------------------------------------------------------------------------------------------------------------- */
+/**
+The one and only one instance of Config class. Notice that the object will be froozen directly after reading the parameters
+*/
+/* ------------------------------------------------------------------------------------------------------------------------- */
+
+const theConfig = new Config;
+
+export default theConfig;
 
 /* --- End of file --------------------------------------------------------------------------------------------------------- */

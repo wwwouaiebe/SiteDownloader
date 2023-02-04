@@ -22,14 +22,60 @@ Changes:
 */
 /* ------------------------------------------------------------------------------------------------------------------------- */
 
-import AppLoader from './AppLoader.js';
-
 /* ------------------------------------------------------------------------------------------------------------------------- */
 /**
-The entry point of the app
+Simple container for a link
 */
 /* ------------------------------------------------------------------------------------------------------------------------- */
 
-new AppLoader ( ).loadApp ( );
+class Link {
+
+	/**
+    The href for the link
+    @type {String}
+    */
+
+	#href;
+
+	/**
+    A flag set to true when the link is downloaded
+    @type {boolean}
+    */
+
+	#downloaded;
+
+	/**
+    The constructor
+	@param {String} href The href for the link
+    */
+
+	constructor ( href ) {
+		Object.freeze ( this );
+		this.#href = href;
+		this.#downloaded = false;
+	}
+
+	/**
+    The href for the link
+    @type {String}
+    */
+
+	get href ( ) { return this.#href; }
+
+	/**
+    A flag set to true when the link is downloaded. Can never be set to false
+    @type {boolean}
+    */
+
+	get downloaded ( ) { return this.#downloaded; }
+
+	set downloaded ( downloaded ) {
+		if ( downloaded && ! this.#downloaded ) {
+			this.#downloaded = true;
+		}
+	}
+}
+
+export default Link;
 
 /* --- End of file --------------------------------------------------------------------------------------------------------- */

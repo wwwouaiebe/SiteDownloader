@@ -30,7 +30,15 @@ module.exports = function ( grunt ) {
 			},
 			target : [ 'src/*.js' ]
 		},
-
+		essimpledoc : {
+			release : {
+				options : {
+					src : './src',
+					dest : './docs/techDoc',
+					validate : true
+				}
+			}
+		},
 		buildnumber : {
 			options : {
 				file : 'buildNumber.json'
@@ -58,14 +66,9 @@ module.exports = function ( grunt ) {
 		}
 	} );
 
-	// Build number
-
-	// grunt.config.data.pkg.buildNumber = grunt.file.readJSON ( 'buildNumber.json' ).buildNumber;
-	// grunt.config.data.pkg.buildNumber = ( '00000' + ( Number.parseInt ( grunt.config.data.pkg.buildNumber ) + 1 ) ).substr ( -5, 5 );
-	// grunt.file.write ( 'buildNumber.json', '{ "buildNumber" : "' + grunt.config.data.pkg.buildNumber + '"}' );
-
 	grunt.loadNpmTasks ( 'grunt-eslint' );
 	grunt.loadNpmTasks ( 'grunt-wwwouaiebe-buildnumber' );
+	grunt.loadNpmTasks ( 'grunt-essimpledoc' );
 
 	grunt.registerTask (
 		'hello',
@@ -102,6 +105,7 @@ module.exports = function ( grunt ) {
 			'hello',
 			'buildnumber:start',
 			'eslint',
+			'essimpledoc',
 			'buildnumber:end',
 			'bye'
 		]
