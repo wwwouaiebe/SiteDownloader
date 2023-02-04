@@ -6,95 +6,84 @@ const { JSDOM } = jsdom;
 
 class Link {
 
-    #href;
+	#href;
 
-    #downloaded;
+	#downloaded;
 
-    constructor ( href ) {
-        Object.freeze ( this );
-        this.#href = href;
-        this.#downloaded = false;
-    }
+	constructor ( href ) {
+		Object.freeze ( this );
+		this.#href = href;
+		this.#downloaded = false;
+	}
 
-    get href ( ) { return this.#href; }
+	get href ( ) { return this.#href; }
 
-    get downloaded ( ) { return this.#downloaded; }
-    set downloaded ( downloaded ) { 
-        if ( downloaded && ! this.#downloaded ){
-            this.#downloaded = true;
-        } 
-    }
+	get downloaded ( ) { return this.#downloaded; }
+
+	set downloaded ( downloaded ) {
+		if ( downloaded && ! this.#downloaded ) {
+			this.#downloaded = true;
+		}
+	}
 }
 
 class SiteDownloader {
 
-    #linkMap;
+	#linkMap;
 
-    #site = 'http://razara.anthisnes.org/';
-    #destDir = 'dest/';
-    #destSite = 'http://razara.anthisnes.org/'
+	#site = 'http://razara.anthisnes.org/';
 
-    #processLink ( href ){
-        if ( 0 === href.indexOf( this.#site ) ) {
-            if ( ! this.#linkMap.get ( href ) ) {
-                this.#linkMap.set ( href,  new Link ( href ) );
-            }
-         }
-    }
+	#destDir = 'dest/';
 
-    #processResponse ( responseText ) {
-        const dom = new JSDOM ( responseText );
-        let document = dom.window.document;
-        document.querySelectorAll('a').forEach(
-            link => { this.#processLink ( link.href ); }
-        );       
-    }
+	#destSite = 'http://razara.anthisnes.org/';
 
-    constructor ( ) {
-        Object.freeze ( this );
-        this.#linkMap = new Map ( );
-    }
+	#processLink ( href ) {
+		if ( 0 === href.indexOf ( this.#site ) ) {
+			if ( ! this.#linkMap.get ( href ) ) {
+				this.#linkMap.set ( href, new Link ( href ) );
+			}
+		}
+	}
 
-    #getNextPage ( ) {
+	#processResponse ( responseText ) {
+		const dom = new JSDOM ( responseText );
+		dom.window.document.querySelectorAll ( 'a' ).forEach (
+			link => { this.#processLink ( link.href ); }
+		);
+	}
 
-/*        const iteratorLink = this.#linkMap.entries();
-        let link =  iteratorLink.next().value [ 1 ];
-        while ( link && link.downloaded ) {
-            link =  iteratorLink.next().value [ 1 ];
-            if ( ! link.downloaded ) {
-                return link.href;
-            }
-        }
+	constructor ( ) {
+		Object.freeze ( this );
+		this.#linkMap = new Map ( );
+	}
 
-        return null;
-*/
-        const iterator1 = this.#linkMap [ Symbol.iterator ]( );
+	#getNextPage ( ) {
+		const iterator1 = this.#linkMap [ Symbol.iterator ] ( );
 
-        for (const item of iterator1) {
-            if ( !item [ 1 ].downloaded  ) {
-                return item [1].href;
-            }
-        }
-        return null;
-    }
+		for ( const item of iterator1 ) {
+			if ( ! item [ 1 ].downloaded ) {
+				return item [ 1 ].href;
+			}
+		}
+		return null;
+	}
 
-    async start ( ) { 
+	async start ( ) {
+		await this.#download ( this.#site );
 
-        await this.#download ( this.#site );
+		let nextPage = this.#getNextPage ( );
+		while ( nextPage ) {
+			await this.#download ( nextPage );
+			nextPage = this.#getNextPage ( );
+		}
+	}
 
-        let nextPage = this.#getNextPage ( )
-        while ( nextPage ) {
-            await this.#download ( nextPage );
-            nextPage = this.#getNextPage ( );
-        }
-    }
-
-    #createPath ( link ) {
-        const filePath = link.replaceAll ( this.#site, this.#destDir );
-        const dirs = filePath.split ( '/');
-        let currentDir = '';
-        dirs.forEach ( 
-            dir => {
+	#createPath ( link ) {
+		const filePath = link.replaceAll ( this.#site, this.#destDir );
+		const dirs = filePath.split ( '/' );
+		let currentDir = '';
+		dirs.forEach (
+			dir => {
 				currentDir += dir + '/';
 				try {
 					if ( ! fs.existsSync ( currentDir ) ) {
@@ -104,32 +93,32 @@ class SiteDownloader {
 				catch ( err ) {
 					console.error ( err );
 				}
-            }
-        );
+			}
+		);
 
-        return filePath;
-    }
+		return filePath;
+	}
 
-    #saveToFile ( link, text ) {
-        const filePath = this.#createPath ( link );
-        const fileContent = text.replaceAll ( this.#site, this.#destSite );
-        fs.writeFileSync ( filePath + '/index.html', fileContent );
-        this.#linkMap.get ( link ).downloaded = true;
-    }
+	#saveToFile ( link, text ) {
+		const filePath = this.#createPath ( link );
+		const fileContent = text.replaceAll ( this.#site, this.#destSite );
+		fs.writeFileSync ( filePath + '/index.html', fileContent );
+		this.#linkMap.get ( link ).downloaded = true;
+	}
 
-    async #download ( link ) {
-        console.log ( 'Now downloading ' + link );
-        await fetch ( link )
-            .then (
-                response => response.text() 
-            )
-            .then (
-                text => {
-                    this.#processResponse ( text ); 
-                    this.#saveToFile ( link, text );
-                }
-            );     
-    }
+	async #download ( link ) {
+		console.log ( 'Now downloading ' + link );
+		await fetch ( link )
+			.then (
+				response => response.text ()
+			)
+			.then (
+				text => {
+					this.#processResponse ( text );
+					this.#saveToFile ( link, text );
+				}
+			);
+	}
 }
 
 const theSiteDownloader = new SiteDownloader;
