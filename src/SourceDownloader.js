@@ -129,6 +129,10 @@ class SourceDownloader {
 		this.#fileCounter = 0;
 		console.clear ( );
 
+		this.#linkMap.set ( theConfig.srcUrl + 'erreur/401', new Link ( theConfig.srcUrl + 'erreur/401' ) );
+		this.#linkMap.set ( theConfig.srcUrl + 'erreur/403', new Link ( theConfig.srcUrl + 'erreur/403' ) );
+		this.#linkMap.set ( theConfig.srcUrl + 'erreur/404', new Link ( theConfig.srcUrl + 'erreur/404' ) );
+
 		// downloading the main page
 		await this.#download ( theConfig.srcUrl );
 
