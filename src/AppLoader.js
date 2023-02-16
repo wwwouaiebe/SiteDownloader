@@ -145,6 +145,16 @@ class AppLoader {
 			theConfig.appDir = process.argv [ 1 ];
 		}
 
+		if ( 'https' !== theConfig.srcUrl.substring ( 0, 5 ) ) {
+			console.error ( `\n\t\x1b[36msrcUrl ${theConfig.srcUrl} must be https\x1b[0m\n` );
+			process.exit ( 1 );
+		}
+
+		if ( 'https' !== theConfig.destUrl.substring ( 0, 5 ) ) {
+			console.error ( `\n\t\x1b[36mdestUrl ${theConfig.destUrl} must be https\x1b[0m\n` );
+			process.exit ( 1 );
+		}
+
 		theConfig.destDir = this.#validatePath ( theConfig.destDir );
 
 		// the config is now frozen
@@ -194,6 +204,9 @@ class AppLoader {
 
 	async loadApp ( options ) {
 
+		const sourceDownloader = new SourceDownloader ( );
+		await sourceDownloader.askCredentials ( );
+
 		// start time
 		const startTime = process.hrtime.bigint ( );
 
@@ -205,7 +218,7 @@ class AppLoader {
 
 		this.#cleanOldFiles ( );
 
-		await new SourceDownloader ( ).start ( );
+		await sourceDownloader.start ( );
 
 		// end of the process
 		const deltaTime = process.hrtime.bigint ( ) - startTime;

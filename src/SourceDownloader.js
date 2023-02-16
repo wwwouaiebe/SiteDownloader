@@ -24,6 +24,10 @@ Changes:
 
 import fs from 'fs';
 import jsdom from 'jsdom';
+import * as readline from 'node:readline/promises';
+import { stdin as input, stdout as output } from 'node:process';
+import { Buffer } from 'buffer';
+import process from 'process';
 
 import theConfig from './Config.js';
 import Link from './Link.js';
@@ -59,6 +63,13 @@ class SourceDownloader {
 	*/
 
 	#excludeList = [ 'TravelNotes', 'EncryptDecrypt', 'base64' ];
+
+	/**
+	The credentials used for the site
+	@type {String}
+	*/
+
+	#credentials;
 
 	/**
     Add an url to the link map if needed
@@ -159,12 +170,35 @@ class SourceDownloader {
 	}
 
 	/**
+    Ask the user name and pswd
+    */
+
+	async askCredentials ( ) {
+		console.clear ( );
+
+		const readlineInterface = readline.createInterface ( { input, output } );
+
+		readlineInterface.write ( 'What is your name?\n' );
+		const userName = await readlineInterface.question ( '' );
+		readlineInterface.write ( 'What is your pswd?\n' );
+		const userPswd = await readlineInterface.question ( '\x1b[8;40m' );
+		readlineInterface.close ( );
+
+		console.clear ( );
+
+		this.#credentials =
+			'Basic ' +
+			Buffer.from ( userName + ':' + userPswd ).toString ( 'base64' );
+
+		console.info ( '\x1b[0m' );
+	}
+
+	/**
 	Start the download
 	*/
 
 	async start ( ) {
 		this.#fileCounter = 0;
-		console.clear ( );
 
 		this.#linkMap.set ( theConfig.srcUrl + 'erreur/401', new Link ( theConfig.srcUrl + 'erreur/401' ) );
 		this.#linkMap.set ( theConfig.srcUrl + 'erreur/403', new Link ( theConfig.srcUrl + 'erreur/403' ) );
@@ -237,14 +271,29 @@ class SourceDownloader {
 	async #download ( downloadedUrl ) {
 		this.#fileCounter ++;
 		console.info ( 'Now downloading ' + downloadedUrl );
-		await fetch ( downloadedUrl )
+		let headers = new Headers ( );
+		headers.append ( 'Authorization', this.#credentials );
+
+		await fetch ( downloadedUrl, { headers : headers } )
 			.then (
-				response => response.text ()
+				response => {
+					if ( response.ok ) {
+						return response.text ();
+					}
+					console.error ( String ( response.status ) + ' ' + response.statusText );
+					process.exit ( 1 );
+				}
 			)
 			.then (
 				fileContent => {
 					this.#extractLinks ( fileContent );
 					this.#saveToFile ( downloadedUrl, fileContent );
+				}
+			)
+			.catch (
+				err => {
+					console.error ( err );
+					process.exit ( 1 );
 				}
 			);
 	}

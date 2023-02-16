@@ -27,10 +27,10 @@
   },
   "scripts": {
     "debug": "node node_modules/grunt/bin/grunt",
-    "anthisnes": "node ./src/index.js --srcUrl=http://razara.anthisnes.org/ --destUrl=https://www.anthisnes.org/ --destDir=./dest",
-    "razaraanthisnes": "node ./src/index.js --srcUrl=http://razara.anthisnes.org/ --destUrl=http://razara.anthisnes.org/ --destDir=./dest",
-    "ouaie": "node ./src/index.js --srcUrl=http://razara.ouaie.be/ --destUrl=https://www.ouaie.be/ --destDir=./dest",
-    "razaraouaie": "node ./src/index.js --srcUrl=http://razara.ouaie.be/ --destUrl=http://razara.ouaie.be/ --destDir=./dest"
+    "anthisnes": "node ./src/index.js --srcUrl=https://razara.anthisnes.org/ --destUrl=https://www.anthisnes.org/ --destDir=./dest",
+    "razaraanthisnes": "node ./src/index.js --srcUrl=https://razara.anthisnes.org/ --destUrl=https://razara.anthisnes.org/ --destDir=./dest",
+    "ouaie": "node ./src/index.js --srcUrl=https://razara.ouaie.be/ --destUrl=https://www.ouaie.be/ --destDir=./dest",
+    "razaraouaie": "node ./src/index.js --srcUrl=https://razara.ouaie.be/ --destUrl=https://razara.ouaie.be/ --destDir=./dest"
   },
   "author": "wwwouaiebe",
   "license": "GPL-3.0",
