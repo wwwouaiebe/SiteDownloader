@@ -72,14 +72,21 @@ class SourceDownloader {
 	#credentials;
 
 	/**
+	The file content after mofdification of the links
+	@type {String}
+	*/
+
+	#fileContent;
+
+	/**
     Add an url to the link map if needed
-    @param {String} url The url to add
+    @param {HTMLElement} anchorHTMLElement the anchor html element with the link
     */
 
-	#processLink ( url ) {
+	#processLink ( anchorHTMLElement ) {
 
 		// decoding the url ( = replace %... with the correct characters )
-		let decodedUrl = decodeURI ( url );
+		let decodedUrl = decodeURI ( anchorHTMLElement.href );
 		let exclude = false;
 
 		// excluding some url
@@ -112,6 +119,11 @@ class SourceDownloader {
 			return;
 		}
 
+		// adding a / at the end of the href to avoid a http 301 error on the server
+		if ( '/' !== decodedUrl.slice ( -1 ) ) {
+			anchorHTMLElement.href += '/';
+		}
+
 		// we add the url to the link map if not already done
 		if ( ! this.#linkMap.get ( decodedUrl ) ) {
 			this.#linkMap.set ( decodedUrl, new Link ( decodedUrl ) );
@@ -134,10 +146,12 @@ class SourceDownloader {
 		dom.window.document.querySelectorAll ( 'a' ).forEach (
 			anchorHTMLElement => {
 				if ( anchorHTMLElement.href ) {
-					this.#processLink ( anchorHTMLElement.href );
+					this.#processLink ( anchorHTMLElement );
 				}
 			}
 		);
+
+		this.#fileContent = dom.serialize ( );
 	}
 
 	/**
@@ -245,10 +259,9 @@ class SourceDownloader {
 	/**
     Adapt the url in the file content, save the file content to a file and adapt the link map
     @param {String} srcUrl the url of the downloaded file
-    @param {String} fileContent the file content
     */
 
-	#saveToFile ( srcUrl, fileContent ) {
+	#saveToFile ( srcUrl ) {
 
 		// Creating the path for the file
 		const filePath = this.#createPath ( srcUrl );
@@ -256,7 +269,7 @@ class SourceDownloader {
 		// replacing url in the file content and saving the file
 		fs.writeFileSync (
 			filePath + '/index.html',
-			fileContent.replaceAll ( theConfig.srcUrl, theConfig.destUrl )
+			this.#fileContent.replaceAll ( theConfig.srcUrl, theConfig.destUrl )
 		);
 
 		// adapting the link map
@@ -287,7 +300,7 @@ class SourceDownloader {
 			.then (
 				fileContent => {
 					this.#extractLinks ( fileContent );
-					this.#saveToFile ( downloadedUrl, fileContent );
+					this.#saveToFile ( downloadedUrl );
 				}
 			)
 			.catch (

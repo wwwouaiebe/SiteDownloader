@@ -150,11 +150,6 @@ class AppLoader {
 			process.exit ( 1 );
 		}
 
-		if ( 'https' !== theConfig.destUrl.substring ( 0, 5 ) ) {
-			console.error ( `\n\t\x1b[36mdestUrl ${theConfig.destUrl} must be https\x1b[0m\n` );
-			process.exit ( 1 );
-		}
-
 		theConfig.destDir = this.#validatePath ( theConfig.destDir );
 
 		// the config is now frozen
