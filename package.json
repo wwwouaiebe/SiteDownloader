@@ -27,8 +27,8 @@
   },
   "scripts": {
     "debug": "node node_modules/grunt/bin/grunt",
-    "anthisnes": "node ./src/index.js --srcUrl=https://razara.anthisnes.org/ --destUrl=/ --destDir=./dest",
-    "ouaie": "node ./src/index.js --srcUrl=https://razara.ouaie.be/ --destUrl=/ --destDir=./dest"
+    "anthisnes": "node ./src/index.js --srcUrl=https://razara.anthisnes.org/ --destUrl=/ --destDir=./dest/anthisnes",
+    "ouaie": "node ./src/index.js --srcUrl=https://razara.ouaie.be/ --destUrl=/ --destDir=./dest/ouaie"
   },
   "author": "wwwouaiebe",
   "license": "GPL-3.0",
