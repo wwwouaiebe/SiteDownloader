@@ -214,9 +214,9 @@ class SourceDownloader {
 	async start ( ) {
 		this.#fileCounter = 0;
 
-		this.#linkMap.set ( theConfig.srcUrl + 'erreur/401', new Link ( theConfig.srcUrl + 'erreur/401' ) );
-		this.#linkMap.set ( theConfig.srcUrl + 'erreur/403', new Link ( theConfig.srcUrl + 'erreur/403' ) );
-		this.#linkMap.set ( theConfig.srcUrl + 'erreur/404', new Link ( theConfig.srcUrl + 'erreur/404' ) );
+		this.#linkMap.set ( theConfig.srcUrl + 'p401/erreur/', new Link ( theConfig.srcUrl + 'p401/erreur/' ) );
+		this.#linkMap.set ( theConfig.srcUrl + 'p403/erreur/', new Link ( theConfig.srcUrl + 'p403/erreur/' ) );
+		this.#linkMap.set ( theConfig.srcUrl + 'p404/erreur/', new Link ( theConfig.srcUrl + 'p404/erreur/' ) );
 
 		// downloading the main page
 		await this.#download ( theConfig.srcUrl );
@@ -291,7 +291,16 @@ class SourceDownloader {
 			.then (
 				response => {
 					if ( response.ok ) {
-						return response.text ();
+						return response.text ( );
+					}
+					else if ( 401 === response.status && downloadedUrl.includes ( 'p401/erreur' ) ) {
+						return response.text ( );
+					}
+					else if ( 410 === response.status && downloadedUrl.includes ( 'p403/erreur' ) ) {
+						return response.text ( );
+					}
+					else if ( 404 === response.status && downloadedUrl.includes ( 'p404/erreur' ) ) {
+						return response.text ( );
 					}
 					console.error ( String ( response.status ) + ' ' + response.statusText );
 					process.exit ( 1 );
