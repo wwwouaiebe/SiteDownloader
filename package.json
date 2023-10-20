@@ -6,7 +6,7 @@
   "bin": {
     "sd": "./src/index.js"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "keywords": [],
   "devDependencies": {
     "eslint": "latest",
@@ -23,7 +23,7 @@
     "url": "git+https://github.com/wwwouaiebe/SiteDownloader.git"
   },
   "engines": {
-    "node": ">=18.14.0"
+    "node": ">=18.18.2"
   },
   "scripts": {
     "debug": "node node_modules/grunt/bin/grunt",
