@@ -27,8 +27,8 @@
   },
   "scripts": {
     "debug": "node node_modules/grunt/bin/grunt",
-    "anthisnes": "node ./src/index.js --srcUrl=http://anthisnes/ --destUrl=/ --destDir=./dest/anthisnes",
-    "ouaie": "node ./src/index.js --srcUrl=http://ouaie/ --destUrl=/ --destDir=./dest/ouaie"
+    "anthisnes": "node ./src/index.js --srcUrl=http://anthisnes:6080/ --destUrl=/ --destDir=./dest/anthisnes",
+    "ouaie": "node ./src/index.js --srcUrl=http://ouaie:6080/ --destUrl=/ --destDir=./dest/ouaie"
   },
   "author": "wwwouaiebe",
   "license": "GPL-3.0",
