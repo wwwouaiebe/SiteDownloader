@@ -6,7 +6,7 @@
   "bin": {
     "sd": "./src/index.js"
   },
-  "version": "1.0.1",
+  "version": "1.1.0",
   "keywords": [],
   "devDependencies": {
     "eslint": "latest",
@@ -27,8 +27,8 @@
   },
   "scripts": {
     "debug": "node node_modules/grunt/bin/grunt",
-    "anthisnes": "node ./src/index.js --srcUrl=https://razara.anthisnes.org/ --destUrl=/ --destDir=./dest/anthisnes",
-    "ouaie": "node ./src/index.js --srcUrl=https://razara.ouaie.be/ --destUrl=/ --destDir=./dest/ouaie"
+    "anthisnes": "node ./src/index.js --srcUrl=http://anthisnes/ --destUrl=/ --destDir=./dest/anthisnes",
+    "ouaie": "node ./src/index.js --srcUrl=http://ouaie/ --destUrl=/ --destDir=./dest/ouaie"
   },
   "author": "wwwouaiebe",
   "license": "GPL-3.0",

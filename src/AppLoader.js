@@ -52,7 +52,7 @@ class AppLoader {
 	@type {String}
 	*/
 
-	static get #version ( ) { return 'v1.0.0'; }
+	static get #version ( ) { return 'v1.1.0'; }
 
 	/**
 	Show the help on the screen
@@ -145,7 +145,11 @@ class AppLoader {
 			theConfig.appDir = process.argv [ 1 ];
 		}
 
-		if ( 'https' !== theConfig.srcUrl.substring ( 0, 5 ) ) {
+		if (
+			-1 !== theConfig.srcUrl.indexOf ( '.' )
+			&&
+			'https' !== theConfig.srcUrl.substring ( 0, 5 )
+		) {
 			console.error ( `\n\t\x1b[36msrcUrl ${theConfig.srcUrl} must be https\x1b[0m\n` );
 			process.exit ( 1 );
 		}
@@ -200,16 +204,19 @@ class AppLoader {
 	async loadApp ( options ) {
 
 		const sourceDownloader = new SourceDownloader ( );
-		await sourceDownloader.askCredentials ( );
+
+		// config
+		this.#createConfig ( options );
+
+		if ( -1 !== theConfig.srcUrl.indexOf ( '.' ) ) {
+			await sourceDownloader.askCredentials ( );
+		}
 
 		// start time
 		const startTime = process.hrtime.bigint ( );
 
 		// console.clear ( );
 		console.info ( `\nStarting SiteDownloader ${AppLoader.#version}...` );
-
-		// config
-		this.#createConfig ( options );
 
 		this.#cleanOldFiles ( );
 

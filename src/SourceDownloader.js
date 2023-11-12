@@ -161,6 +161,7 @@ class SourceDownloader {
 	constructor ( ) {
 		Object.freeze ( this );
 		this.#linkMap = new Map ( );
+		this.#credentials = '';
 	}
 
 	/**
@@ -285,7 +286,10 @@ class SourceDownloader {
 		this.#fileCounter ++;
 		console.info ( 'Now downloading ' + downloadedUrl );
 		let headers = new Headers ( );
-		headers.append ( 'Authorization', this.#credentials );
+
+		if ( '' !== this.#credentials ) {
+			headers.append ( 'Authorization', this.#credentials );
+		}
 
 		await fetch ( downloadedUrl, { headers : headers } )
 			.then (
