@@ -52,7 +52,7 @@ class AppLoader {
 	@type {String}
 	*/
 
-	static get #version ( ) { return 'v1.1.0'; }
+	static get #version ( ) { return 'v1.2.0'; }
 
 	/**
 	Show the help on the screen
@@ -63,6 +63,10 @@ class AppLoader {
 		console.error ( '\t\x1b[36m--version\x1b[0m : the version number\n' );
 		console.error ( '\t\x1b[36m--srcUrl\x1b[0m : The url where the source files are\n' );
 		console.error ( '\t\x1b[36m--destUrl\x1b[0m : The url where the files have to go\n' );
+		console.error (
+			'\t\x1b[36m--srcDir\x1b[0m : the path to the directory where' +
+			' the jpg files are\n'
+		);
 		console.error (
 			'\t\x1b[36m--destDir\x1b[0m : the path to the directory where' +
 			' the files have to be generated\n'
@@ -127,6 +131,9 @@ class AppLoader {
 					case '--destUrl' :
 						theConfig.destUrl = argContent [ 1 ] || theConfig.destUrl;
 						break;
+					case '--srcDir' :
+						theConfig.srcDir = argContent [ 1 ] || theConfig.srcDir;
+						break;
 					case '--destDir' :
 						theConfig.destDir = argContent [ 1 ] || theConfig.destDir;
 						break;
@@ -155,6 +162,7 @@ class AppLoader {
 		}
 
 		theConfig.destDir = this.#validatePath ( theConfig.destDir );
+		theConfig.srcDir = this.#validatePath ( theConfig.srcDir );
 
 		// the config is now frozen
 		Object.freeze ( theConfig );

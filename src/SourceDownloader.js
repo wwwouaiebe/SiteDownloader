@@ -28,6 +28,7 @@ import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import { Buffer } from 'buffer';
 import process from 'process';
+import sharp from 'sharp';
 
 import theConfig from './Config.js';
 import Link from './Link.js';
@@ -209,15 +210,69 @@ class SourceDownloader {
 	}
 
 	/**
+    convert recursively jpg files to WebP files and copy others files
+	@param {String} srcDir the src directory
+	@param {String} destDir the destination directory
+    */
+
+	async #convertJpgs ( srcDir, destDir ) {
+
+		// Searching all files and directories present in the directory
+		const fileNames = fs.readdirSync ( srcDir );
+
+		let fileCounter = 0;
+		for ( fileCounter = 0; fileCounter < fileNames.length; fileCounter ++ ) {
+			let fileName = fileNames [ fileCounter ];
+
+			// Searching the stat of the file/directory
+			const lstat = fs.lstatSync ( srcDir + fileName );
+			if ( lstat.isDirectory ( ) ) {
+
+				// It's a directory. Reading this recursively
+				fs.mkdirSync ( destDir + fileName + '/' );
+				await this.#convertJpgs ( srcDir + fileName + '/', destDir + fileName + '/' );
+			}
+			if ( lstat.isFile ( ) ) {
+				if ( 'jpg' === fileName.split ( '.' ).reverse ( )[ 0 ] ) {
+					await sharp ( srcDir + fileName )
+						.keepIccProfile ( )
+						.withExif (
+							{
+								IFD0 : {
+									Copyright : 'wwwouaiebe contact https://www.ouaie.be/',
+									Artist : 'wwwouaiebe contact https://www.ouaie.be/'
+								}
+							}
+						)
+						.toFile ( destDir + fileName.split ( '.' )[ 0 ] + '.WebP' );
+				}
+				else {
+					fs.copyFileSync ( srcDir + fileName, destDir + fileName );
+				}
+			}
+		}
+	}
+
+	/**
 	Start the download
 	*/
 
 	async start ( ) {
-		this.#fileCounter = 0;
+
+		// Preparing the public folder
+		fs.mkdirSync ( theConfig.destDir + '/public/' );
+		await this.#convertJpgs ( theConfig.srcDir + '/public/', theConfig.destDir + '/public/' );
+
+		// Copying themes
+		fs.cpSync ( theConfig.srcDir + '/themes', theConfig.destDir + '/themes', { recursive : true } );
+
+		// http errors
 
 		this.#linkMap.set ( theConfig.srcUrl + 'p401/erreur/', new Link ( theConfig.srcUrl + 'p401/erreur/' ) );
 		this.#linkMap.set ( theConfig.srcUrl + 'p403/erreur/', new Link ( theConfig.srcUrl + 'p403/erreur/' ) );
 		this.#linkMap.set ( theConfig.srcUrl + 'p404/erreur/', new Link ( theConfig.srcUrl + 'p404/erreur/' ) );
+
+		this.#fileCounter = 0;
 
 		// downloading the main page
 		await this.#download ( theConfig.srcUrl );
@@ -229,6 +284,7 @@ class SourceDownloader {
 			nextUrl = this.#getNextUrl ( );
 		}
 		console.info ( `\n${this.#fileCounter} files generated.` );
+
 	}
 
 	/**
@@ -267,10 +323,13 @@ class SourceDownloader {
 		// Creating the path for the file
 		const filePath = this.#createPath ( srcUrl );
 
-		// replacing url in the file content and saving the file
+		// replacing url and jpg with WebP in the file content
+		this.#fileContent = this.#fileContent.replaceAll ( 'jpg', 'WebP' ).replaceAll ( theConfig.srcUrl, theConfig.destUrl );
+
+		// saving the file
 		fs.writeFileSync (
 			filePath + '/index.html',
-			this.#fileContent.replaceAll ( theConfig.srcUrl, theConfig.destUrl )
+			this.#fileContent
 		);
 
 		// adapting the link map
@@ -297,12 +356,15 @@ class SourceDownloader {
 					if ( response.ok ) {
 						return response.text ( );
 					}
+					// eslint-disable-next-line no-magic-numbers
 					else if ( 401 === response.status && downloadedUrl.includes ( 'p401/erreur' ) ) {
 						return response.text ( );
 					}
+					// eslint-disable-next-line no-magic-numbers
 					else if ( 410 === response.status && downloadedUrl.includes ( 'p403/erreur' ) ) {
 						return response.text ( );
 					}
+					// eslint-disable-next-line no-magic-numbers
 					else if ( 404 === response.status && downloadedUrl.includes ( 'p404/erreur' ) ) {
 						return response.text ( );
 					}

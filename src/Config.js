@@ -45,6 +45,13 @@ class Config {
 	destUrl;
 
 	/**
+	The path to the directory where the jpg are located
+	@type {String}
+	*/
+
+	srcDir;
+
+	/**
 	The path to the directory where the files have to be generated
 	@type {String}
 	*/
@@ -65,6 +72,7 @@ class Config {
 	constructor ( ) {
 		this.srcUrl = '';
 		this.destUrl = '';
+		this.srcDir = '';
 		this.destDir = '';
 		this.appDir = '';
 	}
