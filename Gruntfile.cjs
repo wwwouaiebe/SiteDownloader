@@ -26,7 +26,7 @@ module.exports = function ( grunt ) {
 		eslint : {
 			options : {
 				fix : true,
-				overrideConfigFile : '.eslintrc.json'
+				overrideConfigFile : 'eslint.config.js'
 			},
 			target : [ 'src/*.js' ]
 		},
