@@ -63,7 +63,7 @@ class SourceDownloader {
 	@type {Array.<String>}
 	*/
 
-	#excludeList = [ 'TravelNotes', 'EncryptDecrypt', 'base64','.jpeg' ];
+	#excludeList = [ 'TravelNotes', 'EncryptDecrypt', 'base64', '.jpeg' ];
 
 	/**
 	The credentials used for the site
