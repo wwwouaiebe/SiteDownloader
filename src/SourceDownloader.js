@@ -267,10 +267,12 @@ class SourceDownloader {
 		fs.cpSync ( theConfig.srcDir + '/themes', theConfig.destDir + '/themes', { recursive : true } );
 
 		// http errors
-
-		this.#linkMap.set ( theConfig.srcUrl + 'p401/erreur/', new Link ( theConfig.srcUrl + 'p401/erreur/' ) );
-		this.#linkMap.set ( theConfig.srcUrl + 'p403/erreur/', new Link ( theConfig.srcUrl + 'p403/erreur/' ) );
-		this.#linkMap.set ( theConfig.srcUrl + 'p404/erreur/', new Link ( theConfig.srcUrl + 'p404/erreur/' ) );
+		console.log ( theConfig.srcDir );
+		if ( 'C:\\wamp64\\www\\aiolibre\\' !== theConfig.srcDir ) {
+			this.#linkMap.set ( theConfig.srcUrl + 'p401/erreur/', new Link ( theConfig.srcUrl + 'p401/erreur/' ) );
+			this.#linkMap.set ( theConfig.srcUrl + 'p403/erreur/', new Link ( theConfig.srcUrl + 'p403/erreur/' ) );
+			this.#linkMap.set ( theConfig.srcUrl + 'p404/erreur/', new Link ( theConfig.srcUrl + 'p404/erreur/' ) );
+		}
 
 		this.#fileCounter = 0;
 

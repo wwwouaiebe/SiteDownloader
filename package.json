@@ -29,7 +29,8 @@
   "scripts": {
     "debug": "node node_modules/grunt/bin/grunt",
     "anthisnes": "node ./src/index.js --srcUrl=http://anthisnes:6080/ --destUrl=/ --srcDir=C:/wamp64/www/anthisnes --destDir=./dest/anthisnes",
-    "ouaie": "node ./src/index.js --srcUrl=http://ouaie:6080/  --srcDir=C:/wamp64/www/ouaie --destUrl=/ --destDir=./dest/ouaie"
+    "ouaie": "node ./src/index.js --srcUrl=http://ouaie:6080/  --srcDir=C:/wamp64/www/ouaie --destUrl=/ --destDir=./dest/ouaie",
+    "aiolibre": "node ./src/index.js --srcUrl=http://aiolibre:6080/  --srcDir=C:/wamp64/www/aiolibre --destUrl=/aiolibre/ --destDir=./dest/aiolibre"
   },
   "author": "wwwouaiebe",
   "license": "GPL-3.0",
