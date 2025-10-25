@@ -24,9 +24,6 @@ Changes:
 
 import fs from 'fs';
 import jsdom from 'jsdom';
-import * as readline from 'node:readline/promises';
-import { stdin as input, stdout as output } from 'node:process';
-import { Buffer } from 'buffer';
 import process from 'process';
 import sharp from 'sharp';
 
@@ -64,13 +61,6 @@ class SourceDownloader {
 	*/
 
 	#excludeList = [ 'TravelNotes', 'EncryptDecrypt', 'base64', '.jpeg' ];
-
-	/**
-	The credentials used for the site
-	@type {String}
-	*/
-
-	#credentials;
 
 	/**
 	The file content after mofdification of the links
@@ -162,7 +152,6 @@ class SourceDownloader {
 	constructor ( ) {
 		Object.freeze ( this );
 		this.#linkMap = new Map ( );
-		this.#credentials = '';
 	}
 
 	/**
@@ -183,30 +172,6 @@ class SourceDownloader {
 
 		// nothing found so returning null
 		return null;
-	}
-
-	/**
-    Ask the user name and pswd
-    */
-
-	async askCredentials ( ) {
-		console.clear ( );
-
-		const readlineInterface = readline.createInterface ( { input, output } );
-
-		readlineInterface.write ( 'What is your name?\n' );
-		const userName = await readlineInterface.question ( '' );
-		readlineInterface.write ( 'What is your pswd?\n' );
-		const userPswd = await readlineInterface.question ( '\x1b[8;40m' );
-		readlineInterface.close ( );
-
-		console.clear ( );
-
-		this.#credentials =
-			'Basic ' +
-			Buffer.from ( userName + ':' + userPswd ).toString ( 'base64' );
-
-		console.info ( '\x1b[0m' );
 	}
 
 	/**
@@ -267,8 +232,7 @@ class SourceDownloader {
 		fs.cpSync ( theConfig.srcDir + '/themes', theConfig.destDir + '/themes', { recursive : true } );
 
 		// http errors
-		console.log ( theConfig.srcDir );
-		if ( 'C:\\wamp64\\www\\aiolibre\\' !== theConfig.srcDir ) {
+		if ( 'aiolibre' !== theConfig.site ) {
 			this.#linkMap.set ( theConfig.srcUrl + 'p401/erreur/', new Link ( theConfig.srcUrl + 'p401/erreur/' ) );
 			this.#linkMap.set ( theConfig.srcUrl + 'p403/erreur/', new Link ( theConfig.srcUrl + 'p403/erreur/' ) );
 			this.#linkMap.set ( theConfig.srcUrl + 'p404/erreur/', new Link ( theConfig.srcUrl + 'p404/erreur/' ) );
@@ -347,10 +311,6 @@ class SourceDownloader {
 		this.#fileCounter ++;
 		console.info ( 'Now downloading ' + downloadedUrl );
 		let headers = new Headers ( );
-
-		if ( '' !== this.#credentials ) {
-			headers.append ( 'Authorization', this.#credentials );
-		}
 
 		await fetch ( downloadedUrl, { headers : headers } )
 			.then (

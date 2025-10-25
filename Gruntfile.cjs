@@ -30,15 +30,6 @@ module.exports = function ( grunt ) {
 			},
 			target : [ 'src/*.js' ]
 		},
-		essimpledoc : {
-			release : {
-				options : {
-					src : './src',
-					dest : './docs/techDoc',
-					validate : true
-				}
-			}
-		},
 		buildnumber : {
 			options : {
 				file : 'buildNumber.json'
@@ -67,8 +58,7 @@ module.exports = function ( grunt ) {
 	} );
 
 	grunt.loadNpmTasks ( 'grunt-eslint' );
-	grunt.loadNpmTasks ( 'grunt-wwwouaiebe-buildnumber' );
-	grunt.loadNpmTasks ( 'grunt-essimpledoc' );
+	grunt.loadTasks ( '../Grunt-wwwouaiebe-BuildNumber/tasks/' );
 
 	grunt.registerTask (
 		'hello',
@@ -105,13 +95,8 @@ module.exports = function ( grunt ) {
 			'hello',
 			'buildnumber:start',
 			'eslint',
-			'essimpledoc',
 			'buildnumber:end',
 			'bye'
 		]
 	);
-
-	console.log ( '---------------------------------------------------------------------------------------------------------------------------------------------' );
-	console.log ( '\n                                     ' + grunt.config.data.pkg.name + ' - ' + grunt.config.data.pkg.version + ' - build: ' + grunt.config.data.pkg.buildNumber + ' - ' + grunt.template.today ( 'isoDateTime' ) + '\n' );
-	console.log ( '---------------------------------------------------------------------------------------------------------------------------------------------' );
 };

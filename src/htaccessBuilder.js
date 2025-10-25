@@ -22,79 +22,63 @@ Changes:
 */
 /* ------------------------------------------------------------------------------------------------------------------------- */
 
+import fs from 'fs';
+import theConfig from './Config.js';
+
 /* ------------------------------------------------------------------------------------------------------------------------- */
 /**
-A simple container to store the app configuration
+The htaccess files builder
 */
 /* ------------------------------------------------------------------------------------------------------------------------- */
 
-class Config {
+class HtAccessBuilder {
 
 	/**
-	The url where the source files are.
-	@type {String}
-	*/
-
-	srcUrl;
-
-	/**
-	The url where the files have to go
-	@type {String}
-	*/
-
-	destUrl;
-
-	/**
-	The path to the directory where the jpg are located
-	@type {String}
-	*/
-
-	srcDir;
-
-	/**
-	The path to the directory where the files have to be generated
-	@type {String}
-	*/
-
-	destDir;
-
-	/**
-	The directory where the app is installed. Coming from the app parameter
-	@type {String}
-	*/
-
-	appDir;
-
-	/**
-	 * The name of the site to download
+	 * The folder where the .htaccess are stored
 	 * @type {String}
 	 */
 
-	site;
+	#htAccessPath = '';
 
 	/**
-	The constructor
-	*/
+	 * Build the .htaccess files
+	 */
+
+	build ( ) {
+		const fileNames = fs.readdirSync ( theConfig.destDir );
+		fileNames.forEach (
+			fileName => {
+				const lstat = fs.lstatSync ( theConfig.destDir + '/' + fileName );
+				if ( lstat.isDirectory ( ) ) {
+					const htAccessSrc = 'public' === fileName ? 'public.htaccess' : 'subdirectory.htaccess';
+					if ( fs.existsSync ( this.#htAccessPath + htAccessSrc ) ) {
+						fs.copyFileSync (
+							this.#htAccessPath + htAccessSrc,
+							theConfig.destDir + '/' + fileName + '/.htaccess'
+						);
+					}
+				}
+			}
+		);
+		if ( fs.existsSync ( this.#htAccessPath + 'root.htaccess' ) ) {
+			fs.copyFileSync (
+				this.#htAccessPath + 'root.htaccess',
+				theConfig.destDir + '/.htaccess'
+			);
+		}
+	}
+
+	/**
+	 * The constructor
+	 */
 
 	constructor ( ) {
-		this.srcUrl = '';
-		this.destUrl = '';
-		this.srcDir = '';
-		this.destDir = '';
-		this.appDir = '';
-		this.site = '';
+		Object.freeze ( this );
+		this.#htAccessPath = './htaccess/' + theConfig.site + '/';
 	}
 
 }
 
-/* ------------------------------------------------------------------------------------------------------------------------- */
-/**
-The one and only one instance of Config class. Notice that the object will be froozen directly after reading the parameters
-*/
-/* ------------------------------------------------------------------------------------------------------------------------- */
-
-const theConfig = new Config;
-
-export default theConfig;
+export default HtAccessBuilder;
 
 /* --- End of file --------------------------------------------------------------------------------------------------------- */

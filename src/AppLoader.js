@@ -27,6 +27,7 @@ import process from 'process';
 
 import theConfig from './Config.js';
 import SourceDownloader from './SourceDownloader.js';
+import HtAccessBuilder from './htaccessBuilder.js';
 
 /* ------------------------------------------------------------------------------------------------------------------------- */
 /**
@@ -125,17 +126,20 @@ class AppLoader {
 				arg => {
 					const argContent = arg.split ( '=' );
 					switch ( argContent [ 0 ] ) {
-					case '--srcUrl' :
-						theConfig.srcUrl = argContent [ 1 ] || theConfig.srcUrl;
+					case '--site' :
+						if ( -1 === [ 'anthisnes', 'ouaie', 'aiolibre' ].indexOf ( argContent [ 1 ] ) ) {
+							console.error (
+								`\n\t\x1b[36msite ${argContent [ 1 ]} must be anthisnes, ouaie or aiolibre\x1b[0m\n`
+							);
+							process.exit ( 1 );
+						}
+						theConfig.site = argContent [ 1 ];
+						theConfig.srcUrl = 'http://' + argContent [ 1 ] + ':6080/';
+						theConfig.srcDir = '../../../shared/Serveurs_web/SRV01-Local/' + argContent [ 1 ] + '/';
+						theConfig.destDir = './dest/' + argContent [ 1 ];
 						break;
 					case '--destUrl' :
 						theConfig.destUrl = argContent [ 1 ] || theConfig.destUrl;
-						break;
-					case '--srcDir' :
-						theConfig.srcDir = argContent [ 1 ] || theConfig.srcDir;
-						break;
-					case '--destDir' :
-						theConfig.destDir = argContent [ 1 ] || theConfig.destDir;
 						break;
 					case '--help' :
 						this.#showHelp ( );
@@ -211,14 +215,8 @@ class AppLoader {
 
 	async loadApp ( options ) {
 
-		const sourceDownloader = new SourceDownloader ( );
-
 		// config
 		this.#createConfig ( options );
-
-		if ( -1 !== theConfig.srcUrl.indexOf ( '.' ) ) {
-			await sourceDownloader.askCredentials ( );
-		}
 
 		// start time
 		const startTime = process.hrtime.bigint ( );
@@ -228,7 +226,10 @@ class AppLoader {
 
 		this.#cleanOldFiles ( );
 
+		const sourceDownloader = new SourceDownloader ( );
 		await sourceDownloader.start ( );
+
+		new HtAccessBuilder ( ).build ( );
 
 		// end of the process
 		const deltaTime = process.hrtime.bigint ( ) - startTime;
