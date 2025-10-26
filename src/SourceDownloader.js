@@ -29,6 +29,7 @@ import sharp from 'sharp';
 
 import theConfig from './Config.js';
 import Link from './Link.js';
+import ThemeBuilder from './ThemeBuilder.js';
 
 /* ------------------------------------------------------------------------------------------------------------------------- */
 /**
@@ -229,7 +230,7 @@ class SourceDownloader {
 		await this.#convertJpgs ( theConfig.srcDir + '/public/', theConfig.destDir + '/public/' );
 
 		// Copying themes
-		fs.cpSync ( theConfig.srcDir + '/themes', theConfig.destDir + '/themes', { recursive : true } );
+		new ThemeBuilder ( ).build ( );
 
 		// http errors
 		if ( 'aiolibre' !== theConfig.site ) {
