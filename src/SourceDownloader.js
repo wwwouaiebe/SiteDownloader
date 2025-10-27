@@ -292,6 +292,16 @@ class SourceDownloader {
 
 		// replacing url and jpg with WebP in the file content
 		this.#fileContent = this.#fileContent.replaceAll ( 'jpg', 'WebP' ).replaceAll ( theConfig.srcUrl, theConfig.destUrl );
+		if ( 'aiolibre' === theConfig.site ) {
+			this.#fileContent = this.#fileContent.replaceAll (
+				'"/themes/ductile/style.css"',
+				'"/aiolibre/themes/ductile/style.css"'
+			);
+			this.#fileContent = this.#fileContent.replaceAll (
+				'"/public/photos/',
+				'"/aiolibre/public/photos/'
+			);
+		}
 
 		// saving the file
 		fs.writeFileSync (
