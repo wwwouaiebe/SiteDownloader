@@ -51,7 +51,11 @@ class HtAccessBuilder {
 				const lstat = fs.lstatSync ( theConfig.destDir + '/' + fileName );
 				if ( lstat.isDirectory ( ) ) {
 					const htAccessSrc = 'public' === fileName ? 'public.htaccess' : 'subdirectory.htaccess';
-					if ( fs.existsSync ( this.#htAccessPath + htAccessSrc ) ) {
+					if (
+						fs.existsSync ( this.#htAccessPath + htAccessSrc )
+						&&
+						-1 === [ 'p401', 'p403', 'p404' ].indexOf ( fileName )
+					) {
 						fs.copyFileSync (
 							this.#htAccessPath + htAccessSrc,
 							theConfig.destDir + '/' + fileName + '/.htaccess'
